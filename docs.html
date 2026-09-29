@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AniVora API Documentation</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #0b1020;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #a78bfa;
+        }
+
+        .endpoint {
+            background: #151c31;
+            border: 1px solid #2b3655;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        code,
+        pre {
+            background: #070b16;
+            border-radius: 7px;
+            padding: 12px;
+        }
+
+        pre {
+            overflow-x: auto;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin: 8px 0;
+            padding: 12px;
+            background: #080d19;
+            border: 1px solid #303b5c;
+            color: white;
+            border-radius: 7px;
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        button {
+            background: #7c3aed;
+            border: 0;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        #result {
+            white-space: pre-wrap;
+            margin-top: 15px;
+            color: #a7f3d0;
+        }
+    </style>
+</head>
+
+<body>
+
+<main>
+
+    <h1>AniVora API</h1>
+
+    <p>
+        Developer API documentation and testing console.
+    </p>
+
+    <div class="endpoint">
+        <h2>GET /v1/status</h2>
+
+        <p>Checks whether the API is online.</p>
+
+        <pre>GET /v1/status</pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>GET /v1/models</h2>
+
+        <p>Returns available AniVora models.</p>
+
+        <pre>GET /v1/models</pre>
+    </div>
+
+    <div class="endpoint">
+        <h2>POST /v1/register</h2>
+
+        <p>Creates a developer account and API key.</p>
+
+        <pre>{
+  "name": "Developer",
+  "email": "developer@example.com"
+}</pre>
+    </div>
+
+    <div class="endpoint">
+
+        <h2>POST /v1/generate</h2>
+
+        <p>Send a prompt to AniVora AI.</p>
+
+        <input
+            id="apiKey"
+            type="password"
+            placeholder="AniVora API key"
+        >
+
+        <textarea
+            id="prompt"
+            placeholder="Enter your prompt..."
+        ></textarea>
+
+        <button onclick="generate()">
+            Generate
+        </button>
+
+        <div id="result"></div>
+
+    </div>
+
+</main>
+
+<script>
+async function generate() {
+
+    const apiKey =
+        document.getElementById("apiKey").value.trim();
+
+    const prompt =
+        document.getElementById("prompt").value.trim();
+
+    const result =
+        document.getElementById("result");
+
+    if (!apiKey) {
+        result.textContent =
+            "API key is required.";
+        return;
+    }
+
+    if (!prompt) {
+        result.textContent =
+            "Prompt is required.";
+        return;
+    }
+
+    result.textContent =
+        "Generating...";
+
+    try {
+
+        const response = await fetch(
+            "/v1/generate",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        "Bearer " + apiKey
+                },
+
+                body: JSON.stringify({
+                    model: "anivora-text",
+                    prompt: prompt
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error ||
+                "Generation failed."
+            );
+        }
+
+        result.textContent =
+            data.output?.text ||
+            JSON.stringify(
+                data,
+                null,
+                2
+            );
+
+    } catch (error) {
+
+        result.textContent =
+            "Error: " + error.message;
+    }
+}
+</script>
+
+</body>
+  </html>
