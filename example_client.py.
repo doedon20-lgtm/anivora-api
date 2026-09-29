@@ -1,0 +1,127 @@
+import os
+
+from api_client import AniVoraClient
+
+
+# Change this if your AniVora API is running somewhere else.
+API_URL = os.getenv(
+    "ANIVORA_API_URL",
+    "http://127.0.0.1:8000"
+)
+
+
+def main():
+    print()
+    print("================================")
+    print("      AniVora API Client")
+    print("================================")
+    print()
+
+    # -------------------------------------------------
+    # Ask for an existing API key.
+    # -------------------------------------------------
+
+    api_key = os.getenv("ANIVORA_API_KEY")
+
+    if not api_key:
+        api_key = input(
+            "Enter your AniVora API key: "
+        ).strip()
+
+    if not api_key:
+        print("No API key provided.")
+        return
+
+    client = AniVoraClient(
+        api_key=api_key,
+        base_url=API_URL
+    )
+
+    # -------------------------------------------------
+    # Check the API
+    # -------------------------------------------------
+
+    print("Checking AniVora API...")
+
+    try:
+        status = client.status()
+
+        print()
+        print("API status:")
+        print(status)
+
+    except Exception as error:
+        print()
+        print("API connection failed:")
+        print(error)
+        return
+
+    # -------------------------------------------------
+    # Get available models
+    # -------------------------------------------------
+
+    print()
+    print("Loading models...")
+
+    try:
+        models = client.models()
+
+        print()
+        print("Available models:")
+
+        for model in models.get("models", []):
+            print(
+                f"- {model.get('id')} "
+                f"({model.get('type', 'unknown')})"
+            )
+
+    except Exception as error:
+        print()
+        print("Could not load models:")
+        print(error)
+        return
+
+    # -------------------------------------------------
+    # Send a real authenticated generation request
+    # -------------------------------------------------
+
+    print()
+    prompt = input(
+        "Enter a prompt for AniVora: "
+    ).strip()
+
+    if not prompt:
+        print("No prompt entered.")
+        return
+
+    print()
+    print("Sending request to AniVora API...")
+
+    try:
+        result = client.generate(
+            prompt=prompt,
+            model="anivora-text"
+        )
+
+        print()
+        print("================================")
+        print("             RESULT")
+        print("================================")
+        print()
+
+        output = result.get("output", {})
+        text = output.get("text")
+
+        if text:
+            print(text)
+        else:
+            print(result)
+
+    except Exception as error:
+        print()
+        print("Generation request failed:")
+        print(error)
+
+
+if __name__ == "__main__":
+    main()
