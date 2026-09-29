@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AniVora API — AI Infrastructure for Everyone</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #080b14;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1b2130;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .logo span {
+      color: #8b7cff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #aeb6c8;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 90px 0 70px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1px solid #292f45;
+      border-radius: 999px;
+      color: #a99fff;
+      background: #101426;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: auto;
+      font-size: clamp(42px, 8vw, 76px);
+      line-height: 1.02;
+      letter-spacing: -3px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #9b8cff, #62d9ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 25px auto;
+      color: #aeb6c8;
+      font-size: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .button {
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .primary {
+      background: #7c6cff;
+      color: white;
+    }
+
+    .secondary {
+      border: 1px solid #30374c;
+      background: #111624;
+      color: white;
+    }
+
+    section {
+      padding: 70px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #8f98ab;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: #101522;
+      border: 1px solid #20283a;
+      border-radius: 16px;
+      padding: 25px;
+    }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #929caf;
+      font-size: 14px;
+    }
+
+    .code-box {
+      background: #05070c;
+      border: 1px solid #242b3d;
+      border-radius: 16px;
+      padding: 22px;
+      overflow-x: auto;
+    }
+
+    pre {
+      color: #b9c2d8;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .api-key {
+      color: #8b7cff;
+    }
+
+    .cta {
+      text-align: center;
+      background: #101522;
+      border: 1px solid #20283a;
+      border-radius: 22px;
+      padding: 55px 25px;
+    }
+
+    .cta h2 {
+      font-size: 34px;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: #929caf;
+      max-width: 620px;
+      margin: 0 auto 25px;
+    }
+
+    footer {
+      border-top: 1px solid #1b2130;
+      padding: 30px 0;
+      color: #70798c;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 60px;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <nav>
+      <div class="logo">AniVora <span>API</span></div>
+
+      <div class="nav-links">
+        <a href="#products">Products</a>
+        <a href="#developers">Developers</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#docs">Docs</a>
+      </div>
+    </nav>
+
+    <main>
+
+      <section class="hero">
+
+        <div class="badge">
+          AI infrastructure for developers and companies
+        </div>
+
+        <h1>
+          Build with <span class="gradient">AniVora API</span>
+        </h1>
+
+        <p>
+          Access AI, compute, cloud and developer infrastructure
+          through simple APIs. Built for individuals, startups,
+          developers and companies worldwide.
+        </p>
+
+        <div class="buttons">
+          <a href="#developers" class="button primary">
+            Start Building
+          </a>
+
+          <a href="#docs" class="button secondary">
+            Read Documentation
+          </a>
+        </div>
+
+      </section>
+
+      <section id="products">
+
+        <div class="section-title">
+          <h2>One platform. Multiple possibilities.</h2>
+          <p>
+            The foundation of the future AniVora infrastructure platform.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <div class="card">
+            <div class="card-icon">🤖</div>
+            <h3>AI API</h3>
+            <p>
+              Build applications using AniVora AI services
+              through developer APIs.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🖥️</div>
+            <h3>GPU Compute</h3>
+            <p>
+              Run demanding AI and computing workloads using
+              scalable GPU infrastructure.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">☁️</div>
+            <h3>Cloud</h3>
+            <p>
+              Create workspaces, deploy applications and
+              manage cloud resources.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🎬</div>
+            <h3>Video</h3>
+            <p>
+              Generate, process, render and edit AI-powered
+              video through APIs.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🖼️</div>
+            <h3>Image</h3>
+            <p>
+              Build image-generation and image-processing
+              applications.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">⚡</div>
+            <h3>Developer Infrastructure</h3>
+            <p>
+              Give developers the tools they need to build
+              their own products on AniVora infrastructure.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section id="developers">
+
+        <div class="section-title">
+          <h2>Simple developer experience</h2>
+          <p>
+            Your future AniVora API can work with a simple request.
+          </p>
+        </div>
+
+        <div class="code-box">
+<pre>
+POST /v1/generate
+
+Authorization: Bearer <span class="api-key">YOUR_ANIVORA_API_KEY</span>
+
+{
+  "model": "anivora-ai",
+  "prompt": "Create a modern restaurant website"
+}
+
+Response:
+
+{
+  "success": true,
+  "request_id": "req_example",
+  "result": "..."
+}
+</pre>
+        </div>
+
+      </section>
+
+      <section id="docs">
+
+        <div class="section-title">
+          <h2>Built for developers</h2>
+          <p>
+            The API will eventually support AI, compute,
+            storage and other infrastructure services.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <div class="card">
+            <h3>API Keys</h3>
+            <p>
+              Developers will be able to create and manage
+              their own secure API keys.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Usage</h3>
+            <p>
+              Track requests, compute usage, storage and
+              other resource consumption.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Documentation</h3>
+            <p>
+              Clear documentation for developers and
+              businesses integrating AniVora.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section id="pricing">
+
+        <div class="cta">
+
+          <h2>Build on AniVora</h2>
+
+          <p>
+            Start with the infrastructure foundation today.
+            Real AI compute, GPUs and additional services
+            can be connected later.
+          </p>
+
+          <a href="#developers" class="button primary">
+            Get Started
+          </a>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer>
+      © 2026 AniVora. AniVora API infrastructure.
+    </footer>
+
+  </div>
+
+</body>
+  </html>
