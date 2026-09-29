@@ -1,0 +1,3 @@
+# AniVora API
+# Python standard library is used for the current API server.
+# No external packages are required yet.
