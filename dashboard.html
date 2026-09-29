@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AniVora API Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 230px;
+            background: #11182d;
+            border-right: 1px solid #26304d;
+            padding: 24px 16px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #8b5cf6;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav a {
+            color: #aab3cc;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #1d2744;
+            color: #ffffff;
+        }
+
+        .main {
+            flex: 1;
+            padding: 28px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        #apiStatus {
+            padding: 9px 14px;
+            border-radius: 20px;
+            background: #1d2744;
+            font-size: 14px;
+        }
+
+        #apiStatus.loading {
+            color: #facc15;
+        }
+
+        #apiStatus.online {
+            color: #4ade80;
+        }
+
+        #apiStatus.offline {
+            color: #f87171;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #11182d;
+            border: 1px solid #26304d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card-label {
+            color: #8994af;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: #11182d;
+            border: 1px solid #26304d;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            margin-bottom: 16px;
+            font-size: 19px;
+        }
+
+        .key-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .key-row input {
+            flex: 1;
+            background: #080d1b;
+            border: 1px solid #303b5c;
+            color: #ffffff;
+            padding: 13px;
+            border-radius: 8px;
+        }
+
+        button {
+            border: none;
+            background: #7c3aed;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #6d28d9;
+        }
+
+        .models {
+            display: grid;
+            gap: 10px;
+        }
+
+        .model-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: #080d1b;
+            border: 1px solid #26304d;
+            border-radius: 8px;
+        }
+
+        .model-item span {
+            color: #8994af;
+            font-size: 13px;
+        }
+
+        .dashboard-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #aab3cc;
+            padding: 15px 0;
+        }
+
+        .loading-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #303b5c;
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .dashboard-error {
+            padding: 15px;
+            border: 1px solid #7f1d1d;
+            background: #2a1115;
+            border-radius: 8px;
+            color: #fca5a5;
+        }
+
+        .dashboard-error strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .dashboard-error p {
+            margin-bottom: 12px;
+        }
+
+        .dashboard-empty {
+            color: #8994af;
+            padding: 15px 0;
+        }
+
+        .dashboard-error-banner,
+        .dashboard-message {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 1000;
+            max-width: 350px;
+            padding: 15px 18px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .dashboard-error-banner {
+            background: #3a1418;
+            border: 1px solid #7f1d1d;
+            color: #fecaca;
+        }
+
+        .dashboard-error-banner strong,
+        .dashboard-error-banner span {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-error-banner button {
+            background: #991b1b;
+            padding: 7px 12px;
+            font-size: 12px;
+        }
+
+        .dashboard-message {
+            background: #12351f;
+            border: 1px solid #166534;
+            color: #bbf7d0;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #26304d;
+            }
+
+            .nav {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .main {
+                padding: 18px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .key-row {
+                flex-direction: column;
+            }
+
+            .header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="logo">
+            AniVora <span>API</span>
+        </div>
+
+        <nav class="nav">
+            <a href="#" class="active">Dashboard</a>
+            <a href="register.html">API Keys</a>
+            <a href="#">Documentation</a>
+            <a href="#">Usage</a>
+            <a href="#">Billing</a>
+            <a href="#">Settings</a>
+        </nav>
+    </aside>
+
+
+    <main class="main">
+
+        <div class="header">
+            <h1>Developer Dashboard</h1>
+
+            <div id="apiStatus" class="loading">
+                ● Checking API...
+            </div>
+        </div>
+
+
+        <section class="cards">
+
+            <div class="card">
+                <div class="card-label">API Requests</div>
+                <div class="card-value">0</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">API Keys</div>
+                <div class="card-value">0</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Compute Usage</div>
+                <div class="card-value">0</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Balance</div>
+                <div class="card-value">$0.00</div>
+            </div>
+
+        </section>
+
+
+        <section class="section">
+
+            <h2>Your API Key</h2>
+
+            <div class="key-row">
+
+                <input
+                    id="apiKey"
+                    type="password"
+                    placeholder="Your AniVora API key"
+                    autocomplete="off"
+                >
+
+                <button onclick="copyAPIKey()">
+                    Copy
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="section">
+
+            <h2>Available Models</h2>
+
+            <div
+                id="models"
+                class="models"
+            >
+                <div class="dashboard-loading">
+                    <span class="loading-spinner"></span>
+                    <span>Loading AniVora models...</span>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="section">
+
+            <h2>API Endpoints</h2>
+
+            <div class="model-item">
+                <strong>GET /v1/status</strong>
+                <span>API health</span>
+            </div>
+
+            <br>
+
+            <div class="model-item">
+                <strong>GET /v1/models</strong>
+                <span>Available models</span>
+            </div>
+
+            <br>
+
+            <div class="model-item">
+                <strong>POST /v1/register</strong>
+                <span>Developer registration</span>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="dashboard.js"></script>
+
+</body>
+  </html>
