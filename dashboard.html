@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AniVora API Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #080b14;
+      color: #fff;
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #0d111c;
+      border-right: 1px solid #20283a;
+      padding: 24px 16px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 35px;
+    }
+
+    .logo span {
+      color: #8878ff;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu a {
+      padding: 12px 14px;
+      border-radius: 9px;
+      color: #9ca6ba;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background: #171d2d;
+      color: white;
+    }
+
+    .main {
+      flex: 1;
+      padding: 28px;
+      overflow: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 28px;
+    }
+
+    .account {
+      background: #111827;
+      border: 1px solid #273047;
+      padding: 9px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .status {
+      color: #64d79a;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #101522;
+      border: 1px solid #20283a;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .card-title {
+      color: #8f99ad;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .section {
+      background: #101522;
+      border: 1px solid #20283a;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 19px;
+      margin-bottom: 18px;
+    }
+
+    .key-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .key-box input {
+      flex: 1;
+      min-width: 0;
+      background: #080b14;
+      border: 1px solid #30394f;
+      color: #bfc7d8;
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 13px 18px;
+      background: #7868ff;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .endpoint {
+      background: #080b14;
+      border: 1px solid #262e41;
+      border-radius: 9px;
+      padding: 14px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+
+    .method {
+      color: #65d89a;
+      margin-right: 10px;
+    }
+
+    .empty {
+      color: #7f899c;
+      font-size: 14px;
+    }
+
+    @media (max-width: 850px) {
+
+      .sidebar {
+        width: 70px;
+        padding: 20px 8px;
+      }
+
+      .logo {
+        font-size: 0;
+        text-align: center;
+      }
+
+      .logo span {
+        font-size: 18px;
+      }
+
+      .menu a {
+        text-align: center;
+        font-size: 0;
+      }
+
+      .menu a::first-letter {
+        font-size: 18px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 550px) {
+
+      .main {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .key-box {
+        flex-direction: column;
+      }
+
+      .key-box button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      AniVora <span>API</span>
+    </div>
+
+    <div class="menu">
+      <a href="#" class="active">📊 Dashboard</a>
+      <a href="#">🔑 API Keys</a>
+      <a href="#">📚 Documentation</a>
+      <a href="#">📈 Usage</a>
+      <a href="#">💳 Billing</a>
+      <a href="#">⚙️ Settings</a>
+    </div>
+
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+
+      <h1>Developer Dashboard</h1>
+
+      <div class="account">
+        API Status:
+        <span class="status">● Online</span>
+      </div>
+
+    </div>
+
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-title">
+          API Requests
+        </div>
+
+        <div class="card-value">
+          0
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">
+          API Keys
+        </div>
+
+        <div class="card-value">
+          0
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">
+          Compute Usage
+        </div>
+
+        <div class="card-value">
+          0
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">
+          Balance
+        </div>
+
+        <div class="card-value">
+          $0.00
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="section">
+
+      <h2>Your API Key</h2>
+
+      <div class="key-box">
+
+        <input
+          id="apiKey"
+          type="password"
+          value="No API key generated yet"
+          readonly
+        >
+
+        <button onclick="toggleKey()">
+          Show
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="section">
+
+      <h2>API Endpoints</h2>
+
+      <div class="endpoint">
+        <span class="method">GET</span>
+        /v1/status
+      </div>
+
+      <div class="endpoint">
+        <span class="method">GET</span>
+        /v1/models
+      </div>
+
+      <div class="endpoint">
+        <span class="method">POST</span>
+        /v1/keys
+      </div>
+
+      <div class="endpoint">
+        <span class="method">POST</span>
+        /v1/generate
+      </div>
+
+    </div>
+
+
+    <div class="section">
+
+      <h2>Recent API Activity</h2>
+
+      <p class="empty">
+        No API requests yet.
+      </p>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+  function toggleKey() {
+
+    const input = document.getElementById("apiKey");
+
+    if (input.type === "password") {
+
+      input.type = "text";
+
+    } else {
+
+      input.type = "password";
+
+    }
+
+  }
+
+</script>
+
+</body>
+  </html>
