@@ -333,7 +333,7 @@ async def register(request: Request):
             )
 
         if not re.match(
-            r"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
             email
         ):
 
