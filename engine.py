@@ -1,67 +1,79 @@
 import os
+import torch
+from transformers import pipeline
+
+from engine_config import EngineConfig
 
 
 class AniVoraEngine:
-    """
-    AniVora's model runtime.
-
-    The API talks to this engine.
-    The engine talks to the actual neural-network model.
-
-    This separation lets us later move from CPU
-    to GPU workers without rebuilding the API.
-    """
 
     def __init__(self):
-
         self.name = "AniVora Engine"
-        self.version = "0.2.0"
+        self.version = "0.3.0"
 
-        self.model_name = os.getenv(
-            "ANIVORA_MODEL",
-            "Qwen/Qwen3-0.6B"
-        )
+        self.model_name = EngineConfig.MODEL_NAME
 
         self.pipeline = None
         self.loaded = False
+
+        self.device = self._detect_device()
+
+    def _detect_device(self):
+        if EngineConfig.DEVICE == "cpu":
+            return "cpu"
+
+        if EngineConfig.DEVICE == "cuda":
+            if not torch.cuda.is_available():
+                raise RuntimeError(
+                    "CUDA was requested but no GPU is available."
+                )
+            return "cuda"
+
+        if torch.cuda.is_available():
+            return "cuda"
+
+        return "cpu"
 
     def load(self):
 
         if self.loaded:
             return
 
-        try:
+        print("Loading AniVora model...")
+        print(f"Model: {self.model_name}")
+        print(f"Device: {self.device}")
 
-            from transformers import pipeline
+        device = 0 if self.device == "cuda" else -1
 
-            self.pipeline = pipeline(
-                "text-generation",
-                model=self.model_name
-            )
+        self.pipeline = pipeline(
+            "text-generation",
+            model=self.model_name,
+            device=device
+        )
 
-            self.loaded = True
+        self.loaded = True
 
-        except Exception as error:
-
-            raise RuntimeError(
-                "AniVora model could not be loaded: "
-                + str(error)
-            )
+        print("AniVora model loaded successfully.")
 
     def generate(
         self,
         prompt,
-        max_new_tokens=128,
-        temperature=0.7
+        max_new_tokens=None,
+        temperature=None
     ):
 
         if not prompt or not prompt.strip():
-
             raise ValueError(
                 "Prompt cannot be empty"
             )
 
         self.load()
+
+        if max_new_tokens is None:
+            max_new_tokens = EngineConfig.MAX_NEW_TOKENS
+
+        if temperature is None:
+            temperature = EngineConfig.TEMPERATURE
 
         result = self.pipeline(
             prompt,
@@ -72,9 +84,8 @@ class AniVoraEngine:
         )
 
         if not result:
-
             raise RuntimeError(
-                "AniVora model returned no output"
+                "AniVora model returned no output."
             )
 
         generated = result[0].get(
@@ -93,7 +104,6 @@ def get_engine():
     global _engine
 
     if _engine is None:
-
         _engine = AniVoraEngine()
 
     return _engine
