@@ -1,2 +1,4 @@
+
 fastapi
 httpx
+llama-cpp-python==0.3.16
