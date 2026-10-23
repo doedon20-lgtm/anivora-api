@@ -1,3 +1,4 @@
+
 import json
 import os
 import urllib.error
@@ -12,35 +13,44 @@ class AIEngine:
     def __init__(self):
         self.base_url = os.getenv(
             "ANIVORA_AI_URL",
-            "http://127.0.0.1:11434"
+            "https://andy-lat-magazines-deposits.trycloudflare.com"
         ).rstrip("/")
 
         self.model = os.getenv(
             "ANIVORA_AI_MODEL",
-            "llama3.2"
+            "/data/data/com.termux/files/home/models/qwen/qwen2.5-0.5b-instruct-q4_k_m.gguf"
         )
 
         self.timeout = int(
-            os.getenv(
-                "ANIVORA_AI_TIMEOUT",
-                "120"
-            )
+            os.getenv("ANIVORA_AI_TIMEOUT", "120")
         )
 
     def generate(self, prompt):
-        if not prompt or not prompt.strip():
-            raise AIEngineError(
-                "Prompt cannot be empty."
-            )
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise AIEngineError("Prompt cannot be empty.")
 
         payload = {
             "model": self.model,
-            "prompt": prompt,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are AniVora AI, a helpful assistant. "
+                        "Follow the user's instructions carefully."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": prompt.strip()
+                }
+            ],
+            "max_tokens": 512,
+            "temperature": 0.7,
             "stream": False
         }
 
         request = urllib.request.Request(
-            f"{self.base_url}/api/generate",
+            f"{self.base_url}/v1/chat/completions",
             data=json.dumps(payload).encode("utf-8"),
             headers={
                 "Content-Type": "application/json",
@@ -54,7 +64,6 @@ class AIEngine:
                 request,
                 timeout=self.timeout
             ) as response:
-
                 raw = response.read().decode(
                     "utf-8",
                     errors="replace"
@@ -70,46 +79,50 @@ class AIEngine:
                 data = json.loads(raw)
                 message = data.get(
                     "error",
-                    "AI server returned an error."
+                    "Qwen returned an HTTP error."
                 )
+
+                if isinstance(message, dict):
+                    message = message.get(
+                        "message",
+                        "Qwen returned an HTTP error."
+                    )
             except json.JSONDecodeError:
-                message = raw or "AI server returned an error."
+                message = raw or "Qwen returned an HTTP error."
 
-            raise AIEngineError(message)
-
-        except urllib.error.URLError as error:
             raise AIEngineError(
-                "Could not connect to the AI engine. "
-                f"Make sure the AI server is running at {self.base_url}."
+                f"Qwen HTTP {error.code}: {message}"
             ) from error
 
-        except TimeoutError:
+        except (urllib.error.URLError, TimeoutError) as error:
             raise AIEngineError(
-                "The AI request timed out."
-            )
+                "Could not connect to Qwen at "
+                f"{self.base_url}. Check that llama-server and "
+                "the Cloudflare tunnel are running and that "
+                "ANIVORA_AI_URL is correct."
+            ) from error
 
         try:
             data = json.loads(raw)
         except json.JSONDecodeError as error:
             raise AIEngineError(
-                "AI engine returned malformed JSON."
+                "Qwen returned malformed JSON."
             ) from error
 
-        result = data.get("response")
+        choices = data.get("choices")
+        result = None
 
-        if not isinstance(result, str):
+        if isinstance(choices, list) and choices:
+            message = choices[0].get("message", {})
+            if isinstance(message, dict):
+                result = message.get("content")
+
+        if not isinstance(result, str) or not result.strip():
             raise AIEngineError(
-                "AI engine returned no valid response."
+                "Qwen returned no valid generated text."
             )
 
-        result = result.strip()
-
-        if not result:
-            raise AIEngineError(
-                "AI engine returned an empty response."
-            )
-
-        return result
+        return result.strip()
 
 
 _engine = AIEngine()
